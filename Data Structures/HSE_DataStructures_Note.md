@@ -45,13 +45,14 @@ $$
             <li>1006</li>
         </ol>
         
-        ans:<font color=white>2. 1048</font>←反白
+        ans:<font color=white>2. 1048</font> ←反白
 
 - 多維矩陣
     - 二維矩陣範例![二維矩陣範例](https://i.imgur.com/0P1QbUg.png)<br>該二維矩陣同樣能透過前述計算式獲得記憶體位置資訊。
     - 唯一必須注意的是，一般通用邏輯為先 row 再 column。
 
-- 藉由上述的記憶體位置說明矩陣實際在記憶體中配置的狀態<br>![Memory Allocation](https://i.imgur.com/jWNug5p.png)<br>分為 Row-major 及 Column-major 兩種做法，以二維矩陣為例：
+- 藉由上述的記憶體位置說明矩陣實際在記憶體中配置的狀態<br>![Memory Allocation](https://i.imgur.com/9GRiISZ.png)
+<br>分為 Row-major 及 Column-major 兩種做法，以二維矩陣為例：
     - Row-major
         - 先遍歷行(Column)，再遍歷列(Row)。
         - 就記憶體上的連續性來看，row 相較於 column 來說索引值會較常保持不變。
@@ -68,7 +69,7 @@ $$
             <li>(1, 2, 1)</li>
         </ol>
         
-        ans:<font color=white>1. (2, 1, 1)</font>←反白
+        ans:<font color=white>1. (2, 1, 1)</font> ←反白
 
 - 矩陣的基本操作
     - 見下圖說明<br>![矩陣基本操作](https://i.imgur.com/3hWGvly.png)
