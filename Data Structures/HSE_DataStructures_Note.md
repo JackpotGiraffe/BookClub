@@ -17,4 +17,6 @@
     - [演算法與資料結構](http://alrightchiu.github.io/SecondRound/mu-lu-yan-suan-fa-yu-zi-liao-jie-gou.html)
     - 待補
 
-- [Week 1](/xKWBTnkzTjWcnlndZERGCw)
+- 課程主要內容
+    - [Week 1](/xKWBTnkzTjWcnlndZERGCw)
+    - [Week 2](/UfHqXuJtSf-1CC85tQZCrw)
