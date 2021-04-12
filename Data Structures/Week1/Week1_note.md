@@ -401,7 +401,7 @@ return 1 + Size(tree.left) + Size(tree.right)
     - Depth-first：走訪完其中一個子節點為根的子樹，才會移至該子節點的其他Sibling為根的子樹。
     - Breadth-first：走訪完同一階層所有的節點才往下一個階層運行。
 
-- Depth-first
+- Depth-First Traversal
     - 基本原則
         - 以任一根節點為基準，有三種遍歷方式，分別代表根節點位於中序(In-Order)、前序(Pre-Order)、後序(Post-Order)，同時代表印出順序。
     - 中序表示，InOrderTraversal(tree)
@@ -415,7 +415,7 @@ return 1 + Size(tree.left) + Size(tree.right)
             ```
             ![Tree_InOrderTraversal](https://i.imgur.com/pTbTtUH.gif)
     - 前序表示，PreOrderTraversal(tree)
-        - 前序表示以節點i為根，先印出根節點i，再遍歷i的左子樹所有節點後，最後遍歷i的右子樹所有節點；依序印出後，任一節點i之後印出的所有節點，可切分為前半部i的左子樹，與後半部i的右子樹。
+        - 前序表示以節點i為根，先印出根節點i，再遍歷i的左子樹所有節點後，最後遍歷i的右子樹所有節點；依序印出後，任一節點i<font color=red>之後</font>印出的所有節點，可切分為前半部i的左子樹，與後半部i的右子樹。
             ```
             if tree = nil:
                 return
@@ -425,4 +425,35 @@ return 1 + Size(tree.left) + Size(tree.right)
             ```
             ![Tree_PreOrderTraversal](https://i.imgur.com/FIS5WgG.gif)
     - 後序表示，PostOrderTraversal(tree)
-        - 後序表示以節點i為根，先遍歷i的左子樹所有節點後，再遍歷i的右子樹所有節點，最後印出根節點i；依序印出後，任一節點i之前印出的所有節點，可切分為前半部i的左子樹，與後半部i的右子樹。
+        - 後序表示以節點i為根，先遍歷i的左子樹所有節點後，再遍歷i的右子樹所有節點，最後印出根節點i；依序印出後，任一節點i<font color=red>之前</font>印出的所有節點，可切分為前半部i的左子樹，與後半部i的右子樹。
+            ```
+            if tree = nil:
+                return
+            PostOrderTraversal(tree.left)
+            PostOrderTraversal(tree.right)
+            Print(tree.key)
+            ```
+            ![Tree_PostOrderTraversal](https://i.imgur.com/nPHbGa1.gif)
+
+- Breadth-First Traversal
+    - 從整棵樹的根節點開始，沒有例外，一層(Level)的所有節點遍歷完後才會往下至下一階。
+    - 層序表示，LevelTraversal(tree)
+        ```
+        if tree = nil:
+            return
+        Queue q
+        q.Enqueue(tree)
+        while not q.Empty():
+            node <-- q.Dequeue()
+            Print(node)
+            if node.left ~= nil:
+                q.Enqueue(node.left)
+            if node.right ~= nil:
+                q.Enqueue(node.right)
+        ```
+        
+- 結論
+    - 很多不同且性質迥異的事物都可能可以用樹的結構表示。
+    - 樹的結構中，節點含有鍵值(Key)與子節點(Children)。
+    - 樹的遍歷(追蹤)包含：DFS(pre-order、in-order、post-order)與BFS。
+    - 遞迴演算法(或程式設計方法)在樹的遍歷上為常見應用手段。
