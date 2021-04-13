@@ -1,5 +1,18 @@
 # Data Structures Week 1
 
+## Objective
+    - List the basic data structures.
+    - Analyze operations with data structures.
+    - Choose appropriate basic data structure for a task at hand.
+    - Apply basic data structures in programming challenges.
+    - Develop a program that simulates network packet processing.
+
+- 學習目標
+    - 表列基本資料結構。
+    - 針對上述資料結構的操作行為分析。
+    - 對於面臨的問題或工作選擇適當的基本資料結構解決問題。
+    - 在程式撰寫與設計的挑戰過程中應用資料結構。
+    - 開發用於模擬網路數據封包發送處理的程式。
 
 ## 矩陣(Arrays)
 
