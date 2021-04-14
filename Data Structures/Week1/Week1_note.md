@@ -46,7 +46,7 @@ $$
         <li>1006</li>
     </ol>
 
-    ans: <font color=white>2. 1048</font> ←反白
+    ans: 答案見留言
 
 - 多維矩陣
     - 二維矩陣範例<br>![二維矩陣範例](https://i.imgur.com/0P1QbUg.png)<br>該二維矩陣同樣能透過前述計算式獲得記憶體位置資訊。
@@ -69,7 +69,7 @@ $$
         <li>(1, 2, 1)</li>
     </ol>
         
-    ans: <font color=white>1. (2, 1, 1)</font> ←反白
+    ans: 答案見留言
 
 - 矩陣的基本操作
     - 見下圖說明<br>![矩陣基本操作](https://i.imgur.com/3hWGvly.png)
@@ -124,7 +124,7 @@ $$
         <li>c, b, a</li>
     </ol>
     
-    ans: <font color=white>3. c, b, a</font> ←反白
+    ans: 答案見留言
     
 - 演算法及操作時間分析
     - PushFront<br>![SLL_PushFront](https://i.imgur.com/Ekp2uY5.gif)
@@ -230,7 +230,7 @@ $$
         return stack.Empty()
         ```
     - 範例
-        - Given the unbalanced string "()([]", what character is on the top of the stack when the for loop is finished?<br>ans: <font color=white>(</font> ←反白
+        - Given the unbalanced string "()([]", what character is on the top of the stack when the for loop is finished?<br>ans: 答案見留言
 
 - 以矩陣(Array) 實作堆疊(Stack)
     - 必須先準備一固定大小的矩陣，也因此實作的堆疊空間大小受此矩陣限制。<br>![Array2Stack](https://i.imgur.com/NEsCgGh.png)
@@ -311,7 +311,7 @@ $$
         - The queue wouldn't work right
         - The queue would work correctly.
         - The queue would work correctly, but Dequeue would be O(n) time if the list were singly-linked with a tail pointer.<br>
-    ans: <font color=white>1、3、5、6</font> ←反白
+    ans: 答案見留言
 
 - 以矩陣(Array) 實作佇列
     - 該實作方式又稱為環形佇列(Circular Queue)
@@ -381,7 +381,7 @@ $$
         - 樹高(Height)：Maximum depth of sub tree node and farthest leaf. E.g. Height of Sam is 3, height of Kate is 2, height of Fred is 1.
         - 森林(Forest)：Collection of trees.
     - 範例
-        - Is Hugh a child of Fred?<br>ans: <font color=white>False</font> ←反白
+        - Is Hugh a child of Fred?<br>ans: 答案見留言
 
 - Node contains:
     - key
