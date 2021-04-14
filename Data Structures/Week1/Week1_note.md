@@ -21,7 +21,7 @@
 - 定義
     - 記憶體上的連續空間(區域)、一大(區)塊記憶體(One chunk of memory)。
     - 該連續空間被劃分為大小相等的若干個元素、元件。
-    - 每個元素都依序被標上連續的正整數作為指標(index, 索引值)。<br>![矩陣範例](https://i.imgur.com/5bsv37v.png)
+    - 每個元素都依序被標上連續的正整數作為指標(index, 索引值)。<br>![Array_sample](https://i.imgur.com/5bsv37v.png)
     - 上圖為一矩陣範例，其大小(長度)為7，索引值自1標至7，在有些語言中索引值如上從1開始(one-based indexing)，有些語言則會從0開始(zero-based indexing)，甚至有些語言能讓使用者自行定義起始索引值。
 
 - 特性
@@ -49,10 +49,10 @@ $$
     ans: 答案見留言
 
 - 多維矩陣
-    - 二維矩陣範例<br>![二維矩陣範例](https://i.imgur.com/0P1QbUg.png)<br>該二維矩陣同樣能透過前述計算式獲得記憶體位置資訊。
+    - 二維矩陣範例<br>![Array_2D_sample](https://i.imgur.com/0P1QbUg.png)<br>該二維矩陣同樣能透過前述計算式獲得記憶體位置資訊。
     - 唯一必須注意的是，一般通用邏輯為先 row 再 column。
 
-- 藉由上述的記憶體位置說明矩陣實際在記憶體中配置的狀態<br>![Memory Allocation](https://i.imgur.com/9GRiISZ.png)<br>分為 Row-major 及 Column-major 兩種做法，以二維矩陣為例：
+- 藉由上述的記憶體位置說明矩陣實際在記憶體中配置的狀態<br>![Array_MemoryAllocation](https://i.imgur.com/9GRiISZ.png)<br>分為 Row-major 及 Column-major 兩種做法，以二維矩陣為例：
     - Row-major
         - 在同一列(Row)中遍歷完所有元素後，才移至下一列繼續操作。
         - 就記憶體上的連續性來看，row 相較於 column 來說索引值會較常保持不變。
@@ -72,7 +72,7 @@ $$
     ans: 答案見留言
 
 - 矩陣的基本操作
-    - 見下圖說明<br>![矩陣基本操作](https://i.imgur.com/3hWGvly.png)
+    - 見下圖說明<br>![Array_BasicOpTime](https://i.imgur.com/3hWGvly.png)
         - 對矩陣做增加或刪除元素的操作行為，皆不影響時間複雜度(Time Complexity)，僅討論操作時的起始位置(索引值)。
         - 若從矩陣起始位置著手操作，所需時間為$\mathcal{O}(n)$，因為除了主要目的以外，還必須將整個矩陣的其他元素依序位移。
         - 若從矩陣末端位置著手操作，所需時間僅為$\mathcal{O}(1)$，因為可以透過索引值直接取得操作對象的位置。
@@ -93,7 +93,7 @@ $$
     - 節點具備另一空間存放指向下一個節點的指標 (Next Pointer)。
     - 串列末端的節點只有使用到存放元素的空間，存放 Next Pointer 的空間為空(Nil)。
     - 元素可為整數、浮點數…等基本資料型別，也可以是其他複雜資料結構(非典型用法，視其必要性使用)。
-    - 示意圖<br>![SLL](https://i.imgur.com/2onq97f.png)
+    - 示意圖<br>![LinkedList_SLL](https://i.imgur.com/2onq97f.png)
 
 
 - 常用基本操作
@@ -127,20 +127,65 @@ $$
     ans: 答案見留言
     
 - 演算法及操作時間分析
-    - PushFront<br>![SLL_PushFront](https://i.imgur.com/Ekp2uY5.gif)
-    - PopFront<br>![SLL_PopFront](https://i.imgur.com/MjeYrNp.gif)
-    - PushBack(without tail pointer)<br>![SLL_PushBack(ntp)](https://i.imgur.com/AD7w21e.png)
-    - PopBack(without tail pointer)<br>![SLL_PopBack(ntp)](https://i.imgur.com/CVebJKi.png)
-    - PushBack(with tail pointer)<br>![SLL_PushBack(wtp)](https://i.imgur.com/14Gd0L9.gif)
-    - PopBack(with tail pointer)<br>![SLL_PopBack(wtp)](https://i.imgur.com/EUwGHJ3.gif)
+    - PushFront<br>![LinkedList_SLL_PushFront](https://i.imgur.com/Ekp2uY5.gif)
+    - PopFront<br>![LinkedList_SLL_PopFront](https://i.imgur.com/MjeYrNp.gif)
+    - PushBack(without tail pointer)<br>![LinkedList_SLL_PushBack(ntp)](https://i.imgur.com/AD7w21e.png)
+    - PopBack(without tail pointer)<br>![LinkedList_SLL_PopBack(ntp)](https://i.imgur.com/CVebJKi.png)
+    - PushBack(with tail pointer)<br>![LinkedList_SLL_PushBack(wtp)](https://i.imgur.com/14Gd0L9.gif)
+    - PopBack(with tail pointer)<br>![LinkedList_SLL_PopBack(wtp)](https://i.imgur.com/EUwGHJ3.gif)
 <!-- 2021.4.8 完成至此 -->
 
 - 操作虛擬碼
-    - PushFront(key)<br>![SSL_PushFrontAlg](https://i.imgur.com/bW810Oo.png)
-    - PopFront()<br>![SSL_PopFrontAlg](https://i.imgur.com/TyKVwPE.png)
-    - PushBack(key)<br>![SSL_PushBackAlg](https://i.imgur.com/vRKY3SU.png)
-    - PopBack()<br>![SSL_PopBackAlg](https://i.imgur.com/TfpPAyh.png)
-    - AddAfter(node, key)<br>![SSL_AddAfterAlg](https://i.imgur.com/kVJGsoy.png)
+    - PushFront(key)
+    ```=
+    node < new node
+    node.key <-- key
+    node.next <-- head
+    head <-- node
+    if tail = nil:
+        tail <-- head
+    ```
+    - PopFront()
+    ```=
+    if head = nil:
+        ERROR: empty list
+    head <-- head.next
+    if head = nil:
+    tail <-- nil
+    ```
+    - PushBack(key)
+    ```=
+    node <-- new node
+    node.key <-- key
+    node.next = nil
+    if tail = nil:
+        head <-- tail <-- node
+    else:
+        tail.next <-- node
+        tail <-- node
+    ```
+    - PopBack()
+    ```=
+    if head = nil:
+        ERROR: empty list
+    if head = tail:
+        head <-- tail <-- nil
+    else:
+        p <-- head
+        while: p.next.next ~= nil:
+            p <-- p.next
+        p.next <-- nil
+        tail <-- p
+    ```
+    - AddAfter(node, key)
+    ```=
+    node2 <-- new node
+    node2.key <-- key
+    node2.next = node.next
+    node.next = node2
+    if tail = node:
+        tail <-- node2
+    ```
 
 - 時間複雜度總結
     |Singly-Linked List Op|no tail|with tail|
@@ -165,7 +210,7 @@ $$
     - 首個節點不含prev pointer(不會指向head pointer)。
     - 尾端節點不含next pointer(不會指向tail pointer)。
     - 相對於head pointer便有對應的tail pointer指向尾端節點。
-    - 示意圖<br>![DLL](https://i.imgur.com/6G5LMNA.png)
+    - 示意圖<br>![LinkedList_DLL](https://i.imgur.com/6G5LMNA.png)
 
 - 基本操作演算法
     - PushBack(key)<br>![DLL_PushBackAlg](https://i.imgur.com/Zz7Suc5.png)
@@ -215,7 +260,7 @@ $$
             - " ( [ ] ] ( ) "
             - " ] [ "
     - 判定平衡的Pseudocode
-        ```
+        ```=
         IsBalanced(str)
         Stack stack
         for char in str:
@@ -233,7 +278,7 @@ $$
         - Given the unbalanced string "()([]", what character is on the top of the stack when the for loop is finished?<br>ans: 答案見留言
 
 - 以矩陣(Array) 實作堆疊(Stack)
-    - 必須先準備一固定大小的矩陣，也因此實作的堆疊空間大小受此矩陣限制。<br>![Array2Stack](https://i.imgur.com/NEsCgGh.png)
+    - 必須先準備一固定大小的矩陣，也因此實作的堆疊空間大小受此矩陣限制。<br>![Stack_Array2Stack_pre](https://i.imgur.com/NEsCgGh.png)
     - 對矩陣實施一系列的操作以實作堆疊<br>![Stack_ops_Array](https://i.imgur.com/fWwEcZY.gif)
         - Push(a)
         - Push(b)
@@ -253,8 +298,8 @@ $$
         - Empty() $\rightarrow$ True
 
 - 以連結串列(Linked List) 實作堆疊(Stack)
-    - 因為串列特性，只要記憶體仍有足夠空間，堆疊的大小就能夠持續延伸。初始狀態只需要有一串列的head pointer即可。<br>![](https://i.imgur.com/xeBAPj2.png)
-    - 對連結串列實施一系列的操作以實作堆疊<br>![](https://i.imgur.com/GpA1J3D.gif)
+    - 因為串列特性，只要記憶體仍有足夠空間，堆疊的大小就能夠持續延伸。初始狀態只需要有一串列的head pointer即可。<br>![Stack_LL2Stack_pre](https://i.imgur.com/xeBAPj2.png)
+    - 對連結串列實施一系列的操作以實作堆疊<br>![Stack_ops_LL](https://i.imgur.com/GpA1J3D.gif)
         - Push(a)
         - Push(b)
         - Top() $\rightarrow$ b
@@ -346,10 +391,10 @@ $$
 ## 樹(Trees)
 
 - 範例
-    - 文句語法<br>![SyntaxTree_Sentence](https://i.imgur.com/3kXVyh2.png)
-    - 數學表示式<br>![SyntaxTree_Expression](https://i.imgur.com/yh2k3q5.png)
-    - 地理等級<br>![GeographyHierachy](https://i.imgur.com/eRMvO4E.png)
-    - 程式碼<br>![SyntaxTree_Code](https://i.imgur.com/0WP1fWy.png)
+    - 文句語法<br>![Tree_SyntaxTree_Sentence](https://i.imgur.com/3kXVyh2.png)
+    - 數學表示式<br>![Tree_SyntaxTree_Expression](https://i.imgur.com/yh2k3q5.png)
+    - 地理等級<br>![Tree_GeographyHierachy](https://i.imgur.com/eRMvO4E.png)
+    - 程式碼<br>![Tree_SyntaxTree_Code](https://i.imgur.com/0WP1fWy.png)
 
 - 二元搜尋樹(Binary Search Tree)
     - 結構如前述的範例由節點(Node)連接所構成。
@@ -369,7 +414,7 @@ $$
         - 空樹
         - 一個節點<br>![Tree_One_Node](https://i.imgur.com/OgcEaXg.png)
         - 兩個節點<br>![Tree_Two_Nodes](https://i.imgur.com/Ts8DwCz.png)
-    - 常用術(樹)語<br>![Terminology](https://i.imgur.com/isZYFwn.png)
+    - 常用術(樹)語<br>![Tree_Terminology](https://i.imgur.com/isZYFwn.png)
         - 根(Root)：Top node in the tree, e.g. Fred
         - 父母(Parent) vs. 小孩(Child)： A child has a line down directly from a parent. E.g. Kate is a parent of Sam, Sam is a child of Kate
         - 祖先(Ancestor)：Parent, parent of parent, etc.
@@ -395,14 +440,14 @@ $$
     - (optional) parent
 
 - Height(tree)
-```
+```=
 if tree = nil:
     return 0
 return 1 + Max(Height(tree.left), Height(tree.right))
 ```
 
 - Size(tree)
-```
+```=
 if tree = nil:
     return 0
 return 1 + Size(tree.left) + Size(tree.right)
@@ -419,7 +464,7 @@ return 1 + Size(tree.left) + Size(tree.right)
         - 以任一根節點為基準，有三種遍歷方式，分別代表根節點位於中序(In-Order)、前序(Pre-Order)、後序(Post-Order)，同時代表印出順序。
     - 中序表示，InOrderTraversal(tree)
         - 中序表示以節點i為根，先遍歷(印出、print)i的左子樹所有節點後，再印出根節點i，最後遍歷(印出、print)i的右子樹所有節點；依序印出後，任一節點i之前印出的所有節點均屬於i的左子樹，其後印出的所有節點則均屬於i的右子樹。
-            ```
+            ```=
             if tree = nil:
                 return
             InOrderTraversal(tree.left)
@@ -429,7 +474,7 @@ return 1 + Size(tree.left) + Size(tree.right)
             ![Tree_InOrderTraversal](https://i.imgur.com/pTbTtUH.gif)
     - 前序表示，PreOrderTraversal(tree)
         - 前序表示以節點i為根，先印出根節點i，再遍歷i的左子樹所有節點後，最後遍歷i的右子樹所有節點；依序印出後，任一節點i<font color=red>之後</font>印出的所有節點，可切分為前半部i的左子樹，與後半部i的右子樹。
-            ```
+            ```=
             if tree = nil:
                 return
             Print(tree.key)
@@ -439,7 +484,7 @@ return 1 + Size(tree.left) + Size(tree.right)
             ![Tree_PreOrderTraversal](https://i.imgur.com/FIS5WgG.gif)
     - 後序表示，PostOrderTraversal(tree)
         - 後序表示以節點i為根，先遍歷i的左子樹所有節點後，再遍歷i的右子樹所有節點，最後印出根節點i；依序印出後，任一節點i<font color=red>之前</font>印出的所有節點，可切分為前半部i的左子樹，與後半部i的右子樹。
-            ```
+            ```=
             if tree = nil:
                 return
             PostOrderTraversal(tree.left)
@@ -451,7 +496,7 @@ return 1 + Size(tree.left) + Size(tree.right)
 - Breadth-First Traversal
     - 從整棵樹的根節點開始，沒有例外，一層(Level)的所有節點遍歷完後才會往下至下一階。
     - 層序表示，LevelTraversal(tree)
-        ```
+        ```=
         if tree = nil:
             return
         Queue q
