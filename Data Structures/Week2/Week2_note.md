@@ -6,17 +6,17 @@
     - List the methods for amortized analysis.
 
 - 學習目標
-    - 描述動態矩陣的運作細節。
+    - 描述動態陣列的運作細節。
     - 計算資料結構中基本操作的平攤運行時間。
     - 表列平攤分析(Amortized Analysis)中常會使用到的方法。
 
-## 動態矩陣(Dynamic Array)
+## 陣列陣列(Dynamic Array)
 
-- 矩陣為靜態基本資料結構，一旦編譯前決定大小，在編譯之後便無法改變。
-    - 動態配置矩陣是其中一種解決辦法，能夠在執行程式期間調整矩陣的空間，動態地配置在記憶體上。
-    - 但這樣的做法另一面帶來問題，如果配置時，並不知道矩陣的最大空間需要多少該如何？
-    - 我們用間接的方法解決上述問題，與其直接儲存靜態或動態矩陣的參照值(Reference)，不如將動態矩陣的指標(Pointer)保存，並在需要擴充矩陣大小時，即時改變指標至新配置的動態矩陣，將舊的矩陣拋棄，釋放佔有記憶替空間。
-    - 此方法即為動態矩陣，或有些人稱其為可調整大小的矩陣(Resizable Arrays)，且與「動態地配置位置之矩陣」(Dynamically Allocated Arrays)有所區別。
+- 陣列為靜態基本資料結構，一旦編譯前決定大小，在編譯之後便無法改變。
+    - 動態配置陣列是其中一種解決辦法，能夠在執行程式期間調整陣列的空間，動態地配置在記憶體上。
+    - 但這樣的做法另一面帶來問題，如果配置時，並不知道陣列的最大空間需要多少該如何？
+    - 我們用間接的方法解決上述問題，與其直接儲存靜態或動態陣列的參照值(Reference)，不如將動態陣列的指標(Pointer)保存，並在需要擴充陣列大小時，即時改變指標至新配置的動態陣列列，將舊的陣列拋棄，釋放佔有記憶替空間。
+    - 此方法即為動態陣列，或有些人稱其為可調整大小的陣列(Resizable Arrays)，且與「動態地配置位置之陣列」(Dynamically Allocated Arrays)有所區別。
 
 - 定義
     - 一種抽象資料結構，並且(最少)能對其做以下操作：
@@ -36,7 +36,7 @@
     ```
     if i < 0 or i >= size:
         ERROR: index out of range
-    return arrapi[]
+    return arr[i]
     ```
     - Set(i, val)
     ```
@@ -80,15 +80,15 @@
 | Size|$\mathcal{O}(1)$|
 
 - 結論
-    - 不同於靜態矩陣，動態矩陣能夠動態地調整大小。
-    - 新增資料到一個動態矩陣中通常只需花費常數時間，但也有可能用掉線性時間。
-    - 動態矩陣中的部分空間會被浪費掉無法使用。
+    - 不同於靜態陣列，動態陣列能夠動態地調整大小。
+    - 新增資料到一個動態陣列中通常只需花費常數時間，但也有可能用掉線性時間。
+    - 動態陣列中的部分空間會被浪費掉無法使用。
 
 ## 平攤分析(Amortized Analysis)
 
 - 平攤分析(Amortized Analysis)
     - 在操作的分析中，通常我們會針對獨立的最糟情況討論，但這樣有時候會過於嚴苛，尤其是當我們透過一系列的操作分析最糟的情況，而其中某些部分的操作行為成本相對低很多時，如果我們將每個步驟都以最糟情況看待，再將結論總和，對於時間總花費可能會誇大解釋。
-    - 以動態矩陣為例(Adding element)
+    - 以動態陣列為例(Adding element)
         - 我們僅在操作過程中的部分情況下才會調整大小。
         - 在大多數情況下要增加新元素，只需要花費常數時間。
         - 數個$\mathcal{O}(1)$的操作中才會出現一次$\mathcal{O}(n)$的操作
@@ -104,7 +104,7 @@
             - 上述說明中，最壞的情況下一個月要繳清6000美金，剩下59個月不需要繳費，但實際上卻可以採用後者的方法讓每個月負擔不致於太重。
 
 - 聚合分析(Aggregate Method)
-    - 動態矩陣：n次呼叫PushBack
+    - 動態陣列：n次呼叫PushBack
     Let $c_{i}$ = cost of $i$-th insertion.
     $$
     \begin{align}
@@ -124,9 +124,9 @@
         - 將額外計費的成本以代幣形式保存於資料結構中(概念上)。
         - 將代幣用來抵用相對高成本的操作行為所需的花費。
         - 類似平攤貸款(Amortizing Loan)
-    - 動態矩陣：n次呼叫PushBack
+    - 動態陣列：n次呼叫PushBack
         - 每次insertion的花費為3：insertion所需的原始成本為1枚代幣，並且將其他2枚代幣留存使用。
-        - 當遭遇到矩陣空間不足，必須要在insertion時運行額外(成本)操作時，便能使用每次insertion留存的代幣。
+        - 當遭遇到陣列空間不足，必須要在insertion時運行額外(成本)操作時，便能使用每次insertion留存的代幣。
         - 搬移後，固定原始成本2枚代幣中的一枚置於新插入的元素，另一枚則置於$\frac{capacity}{2}$的元素上(用capacity似乎不甚準確)。
         - 操作範例<br>![AmortizedAnalysis_Banker](https://i.imgur.com/P5xsvr8.gif)
         - $\mathcal{O}(1)$
@@ -159,11 +159,11 @@
             =~&\Phi(h_{n})-\Phi(h_{0})+\sum^{n}_{i=1}c_{i}\ge\sum^{n}_{i=1}c_{i}
         \end{align}
         $$
-    - 動態矩陣：n次呼叫PushBack
+    - 動態陣列：n次呼叫PushBack
     Let $\Phi(h)=2\times\text{size}-\text{capacity}$
         - $\Phi(h_{0})=2\times0-0$
         - $\Phi(h_{i})=2\times\text{size}-\text{capacity}\gt0(\because\text{size}\gt\frac{\text{capacity}}{2})$
-    - 在沒有調整矩陣大小的情況下新增元素i
+    - 在沒有調整陣列大小的情況下新增元素i
         - 平攤成本：
         $$
         \begin{align}
@@ -173,7 +173,7 @@
             &=3
         \end{align}
         $$
-    - 在必須調整矩陣大小的情況下新增元素i
+    - 在必須調整陣列大小的情況下新增元素i
         - 平攤成本：
         $$
         \begin{align}
@@ -194,9 +194,9 @@
         - Will the same argument work if we replace the potential function and set $\Phi(h) = 3 \times size - capacity$?<br>ans: 答案見留言
         
 - 延伸思考
-    - 在前述內容中，我們的假設前提是每次resize矩陣時，都將大小乘以2倍，也就是說以等比級數的方式成長。
+    - 在前述內容中，我們的假設前提是每次resize陣列時，都將大小乘以2倍，也就是說以等比級數的方式成長。
     - 若將該成長係數(Growth Factor)改為其他正數(例如1.5、3、15)，上方一系列的分析是否還能成立？ans: 答案見留言
-    - 若將resize矩陣的方式改為常數增加，例如每次resize增加10個位置，上方一系列的分析是否還能成立？ans: 答案見留言
+    - 若將resize陣列的方式改為常數增加，例如每次resize增加10個位置，上方一系列的分析是否還能成立？ans: 答案見留言
         - If we expend by 10 each time, then:
         Let $c_{i}$ = cost of $i$-th insertion.
         $$
