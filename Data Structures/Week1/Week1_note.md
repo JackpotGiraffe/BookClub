@@ -509,6 +509,7 @@ return 1 + Size(tree.left) + Size(tree.right)
             if node.right ~= nil:
                 q.Enqueue(node.right)
         ```
+    - 先將根結點Enqueue到佇列中，然後判斷該樹是否為空，非空則Dequeue一次目前的佇列，並且印出Dequeue的節點。接著將該節點的左子節點Enqueue，然後Enqueue右子節點，然後再從佇列中Dqueue一次，印出，以此節點為準再Enqueue其左右子節點，周而復始。
         
 - 結論
     - 很多不同且性質迥異的事物都可能可以用樹的結構表示。
