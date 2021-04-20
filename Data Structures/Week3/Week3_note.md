@@ -10,7 +10,7 @@
 
 - 學習目標
     - 描述堆積(Heap)與優先權佇列(Priority Queue)如何運作。
-    - 描述併查集(Disjoint Set Union)這類資料結構。
+    - 描述併查集(Disjoint Set)這類資料結構。
     - 藉堆積分析操作的運行時間。
     - 表列加速併查集使用上的啟發方法。(???)
     - 將優先權佇列應用於處理器上的工作時間安排。
@@ -274,3 +274,290 @@
         - Fast: all operations work in time $\mathcal{O}(log(n))$(GetMax even works in $\mathcal{O}(1)$).
         - Space efficient: store priorities in an array; parent-child connections are not stored, but are computed on the fly.
         - Easy to implement: all operations are implemented in just a few lines of code.
+
+## 堆積排序法(Heap Sort)
+
+- 用Heap設計排序演算法，因為其高效運用空間且快速運行的特性。
+    - HeapSort(A[1...n])
+    ```=
+    create an empty priority queue
+    for i from 1 to n:
+        Insert(A[i])
+    for i from n downto 1:
+        A[i] <-- ExtractMax()
+    ```
+    - 這樣的演算法為Comparison-based且running time為$\mathcal{O}(nlog(n))$
+    - This is natural generalization of selection sort: instead of simply scanning the rest of the array to the maximum value, use a smart data structures.
+    - 目前(上方)的演算法唯一的缺點是使用額外記憶體空間，Not in-place
+
+- Turn Array into a Heap
+    - BuildHeap(A[n])
+    ```=
+    size <-- n
+    for i form floor(n/2) downto 1:
+        SiftDown(i)
+    ```
+    - 從$\lfloor \frac{n}{2} \rfloor$開始的原因是，對Binary Max Heap來說，我們只要能確定子樹為Binary Max Heap，則只需要適當調整該子樹所屬的根節點到適當位置，即能夠滿足Binary Max Heap的性質，所以整顆樹的調整從最後一個擁有左右子點的parent開始更新即可最終達成目標。
+
+- As far we know
+    - Repair the heap property going from bottom to top.
+    - Initially, the heap property is satisfied in all the leaves.
+    - Start repairing the heap property in all sub trees of depth 1.
+    - When we reach the root, the heap property is satisfied in the whole tree.
+    - [Heap Sort Visualization](https://www.cs.usfca.edu/~galles/visualization/HeapSort.html)
+    - Running time: $\mathcal{O}(nlog(n))$
+
+- 不佔用額外記憶體空間的Heap Sort(In-Place)
+    - HeapSort(A[1...n])
+    ```=
+    Build(A) {size = n}
+    repeat (n - 1) times:
+        swap A[1] and A[size]
+        size <-- size - 1
+        SiftDown(1)
+    ```
+
+- 結論
+    - Heap Sort能做到in-place的方式不佔用記憶體空間。
+    - Heap Sort為Selection Sort的改善型。
+    - 相較於Quick Sort平均running time為$\mathcal{O}(nlog(n))$，Heap Sort則的$\mathcal{O}(nlog(n))$ running time則是worst case。
+    - 有一種稱為IntraSort的實作做法就是以Quick Sort出發，如果發現運行時間太久(recursion dips)，使得時間超過$clog(n)\text{, for }c\text{ is a constant}$，那麼便轉為使用Heap Sort繼續運行。
+
+## Building Heap
+
+- 將時間複雜度分析更精緻提煉
+    - BuildHeap的時間為$\mathcal{O}(nlog(n))$，是因為對$\mathcal{O}(n)$個節點我們都呼叫了兩次SiftDown。
+    - 但相對於根節點來說，越靠近樹葉的節點在運行SiftDown花的時間應該更快更少($\text{much less than }\mathcal{O}(log(n))$)。
+    - Root只有一個，所以實際上真正必須運行花費$log(n)$時間的只有根節點。
+    - Q. Was our estimate of the running time of BuildHeap too pessimistic?
+- 再次分析
+    - 示意圖<br>![PriorityQ_BHrunningtime_01](https://i.imgur.com/NneqTTw.png)
+    $$
+    \begin{align}
+    T(BuildHeap) &\le \frac{n}{2}\cdot 1+\frac{n}{4}\cdot 2+\frac{n}{8}\cdot 3+\dots\\
+    &\le n\cdot\sum^{\infty}_{i=1}\frac{i}{2^i}\\
+    &=2n
+    \end{align}
+    $$
+    - ![](https://i.imgur.com/idgZRxH.png)
+    - ![](https://i.imgur.com/oV5mALB.png)
+    - 這樣分析並沒有實際提升Heap Sort的速度，因為即使完成BuildHeap的時間已經被bond在線性時間花費，但在排序時仍然要ExtractMax運行n-1次。
+    - 也就是說整個Heap Sort的時間仍為$\mathcal{O}(nlog(n))$(而且該方法為comparison-based演算法，已經無法更好了)。
+    - 但上述的分析協助我們更快地解決另一問題。
+
+- Partial Sorting
+    - Input: An array A[1...n], an integer $1 \le k \le n$.
+    - Output: The last k elements of a sorted version of A.
+    - BuildHeap can be solved in $\mathcal{O}(n)$ if k = $\mathcal{O}(\frac{n}{log(n)})$
+    - 藉由上面的分析方式，我們可以讓這個問題的解決時間切切實實地達到線性時間。
+    - PartialSorting(A[1...n], k)
+    ```=
+    BuildHeap(A)
+    for i from 1 to k:
+        ExtractMax()
+    ```
+    - Running time: $\mathcal{O}(n+klog(n))$
+
+- 結論
+    - Heap sort is a time and space efficient comparison-based algorithm: has running time $\mathcal{O}(nlog(n))$, uses no additional space
+    
+## Final Remarks
+
+- Zero-based arrays
+    - Parent(i)
+        - return $\lfloor \frac{i-1}{2} \rfloor$
+    - LeftChild(i)
+        - return $2i+1$
+    - RightChild(i)
+        - return $2i+2$
+
+- Binary Min-Heap
+    - Binary min-heap是一binary tree，且該樹的任一個節點都小於等於其children。
+
+- **d**-ary Heap
+    - 除了最後一個parent以外，所有的parent都必須擁有**d**個chlidren。
+    - 樹高為$log_{d}(n)$
+    - SiftUp的running time為$\mathcal{O}(log_{d}(n))$
+    - SiftDown的running time為$\mathcal{O}(d\cdot log_{d}(n))$
+
+- 結論
+    - Priority queue能支援兩項主要操作：Insert以及ExtractMax。
+    - 用一般的Array/Linked-List來實作Priority queue能在上述兩項操作中，其中一項時間花費達到$\mathcal{O}(1)$，但另一項則會需要$\mathcal{O}(n)$
+    - Binary heap實作Priority queue能讓兩者皆達到$\mathcal{O}(log(n))$，同時節省空間利用。
+
+## 併查集概述
+
+- Maze: Is B reachable from A?<br>![](https://i.imgur.com/qxWDzfg.png)<br>![](https://i.imgur.com/Sgs6Cou.png)
+
+- 定義
+    - Disjoint-set Data Structure支援以下operations:
+        - MakeSet(x) creates a singleton set {x}.
+        - Find(x) returns ID of the set containing x:
+            - if x and y lie in the same set, then Find(x) $=$ Find(y)
+            - otherwise, Find(x) $\neq$ Find(y)
+        - Union(x, y) merges two sets containing x and y.
+    - Preprocess(maze)
+    ```=
+    for each cell c in maze:
+        MakeSet(c)
+    for each cell c in maze:
+        for each neighbor n of c:
+            Union(c, n)
+    ```
+    - IsReachable(A, B)
+    ```=
+    return Find(A) = Find(B)
+    ```
+
+- Building a Network
+    - Kruskal algorithm: build a network of a given set of machines in an optimal way, and uses the disjoint set data structure essentially.
+
+## Disjoint Set初步實作(Naive)
+
+- 為了能夠簡化問題集說明，先假設object都為integers。
+
+- 用任一個集合中，最小值作為該集合的ID。
+
+- 使用smallest[1...n]陣列:
+    - smallest[i]存放元素i所屬的集合中，最小的元素。
+
+- 舉例<br>![](https://i.imgur.com/wrfF2XI.png)
+
+- Operations from previous
+    - MakeSet(i)
+    ```=
+    smallest[i] <-- i
+    ```
+    - Find(i)
+    ```=
+    return smallest[i]
+    ```
+    - Union(i, j)
+    ```=
+    i_id <-- Find(i)
+    j_id <-- Find(j)
+    if i_id = j_id:
+        return
+    m <-- min(i_id, j_id)
+    for k from 1 to n:
+        if smallest[k] in {i_id, j_id}:
+            smallest[k] <-- m
+    ```
+    - Running time: $\mathcal{O}(n)$
+
+- 目前的瓶頸：
+    - Union
+    - 如果想要有效率地merge，應該採用何種資料結構較佳？
+        - Linked-List
+        - 概念：用一條連結串列表示一個集合，用串列的尾端元素(tail)做為其ID。
+    - Pros:
+        - Running time of Union is $\mathcal{O}(1)$.
+        - Well-defined ID.
+    - Cons:
+        - Running time of Find is $\mathcal{O}(n)$.
+        - Union(x, y) works in time $\mathcal{O}(1)$ <font color=red>only</font> if we can get the tail of the list of x and the head f the list of y in constant time.
+
+## Disjoint Set to Tree
+
+- General Settings
+    - 將每個集合以一棵樹表示
+    - 每棵樹的根即為該集合的ID
+    - 建立陣列parent[1...n]：parent[i]表示元素i的父節點，如果i為根，則parent[i] = i。<br>![](https://i.imgur.com/ppzgWwf.png)
+
+
+- 回到基本操作上
+    - MakeSet(i)
+        - Running time: $\mathcal{O}(1)$
+    ```=
+    parent[i] <-- i
+    ```
+    - Find(i)
+        - Running time: $\mathcal{O}(tree~height)$
+    ```=
+    while i ~= parent[i]:
+        i <-- parent[i]
+    return i
+    ```
+
+- 問：如何將兩棵樹(兩集合)merge？
+    - 將其中一棵樹以子樹的形式掛在另一棵樹的根節點下。
+
+- 問：哪一棵樹應該被掛在另一棵樹底下？
+    - 直覺上應將樹高小的掛在樹高大的樹根底下，目的 → SHALLOW。
+
+## Union by Rank
+
+- 導言
+    - Merging 2 trees： 將樹高小的掛在樹高大的樹根底下成為子樹。
+    - 為了要快速確認兩棵樹各自的樹高以做比較，使用陣列rank[1...n]：rank[i]表示以i為根的子樹其高度。
+    - 為什麼稱為rank而不直接用height命名，在後續內容會越加明朗。
+    - 把樹高小的掛在樹高大的樹根底下這件事，自此以後用一固定的sentance描述：Union by rank heuristic.
+
+- 再次回顧Operations
+    - MakeSet(i)
+    ```=
+    parent[i] <-- i
+    rank[i] <-- 0
+    ```
+    - Find(i)
+    ```=
+    while i ~= parent[i]:
+        i <-- parent[i]
+    return i
+    ```
+    - Union(i, j)
+    ```=
+    i_id <-- Find(i)
+    j_id <-- Find(j)
+    if i_id = j_id:
+        return
+    if rank[i_id] > rank[j_id]:
+        parent[j_id] <-- i_id
+    else:
+        parent[i_id] <-- j_id
+        if rank[i_id] = rank[j_id]:
+            rank[j_id] <-- rank[j_id] + 1
+    ```
+
+- 範例<br>![](https://i.imgur.com/FNOYBRl.gif)
+
+- 重要性質：對於任一節點$i$，rank[i]表示的是以$i$為根的樹其樹高。
+    - 該性質會在證明下方***Lemma***時用到：
+        - 任何森林中的樹，其樹高最多不會超過$log_{2}n$。
+    - 並且在藉由下述***Lemma***進一步證明上面的***Lemma***：
+        - 一森林中的任何樹高為$k$的樹，其中至少會含有$2^k$個節點。
+    - 證明其二：
+        $k=0$ 時，$2^0=1$
+        若一樹高為$k$且由兩$k-1$高的樹merge而得，根據歸納法假設，兩棵樹各會有至少$2^{k-1}$個節點，因此merge後的結果至少會有$2\times 2^{k-1}$個節點。
+    
+- 結論
+    - Union by rank heuristic這樣的做法能確保得到的新樹其Unio以及Find兩項操作花費時間再$\mathcal{O}(\text{log }n)$
+
+## Path Compression
+
+- 直覺
+    - 除了能做到Find(6)以外，這項操作同時解決了Find(i)，$\forall$ i 屬於6到root這條path上任一節點。<br>![](https://i.imgur.com/QjAPlyy.png)
+    - 根據這項性質我們充分利用資訊，就能夠將這棵樹重新建構成下列樣貌。<br>![](https://i.imgur.com/sBUVcOU.png)
+    - 這樣對樹的重構能夠在未來Find其他元素時省下時間，
+    - Find(i)
+    ```=
+    if i ~= parent[i]:
+        parent[i] <-- Find(parent[i])
+    return parent[i]
+    ```
+    
+- 定義
+    - The itrated logarithm of $n$, $\text{log}^*~n$, is the number of times the logarithm function needs to be applied to $n$ before the result is less or equal than 1.
+    - 在對節點數$n$重複取log函數，以使得其結果小於等於1之前所需要取log函數的次數稱為$\text{log}^*~n$(The itrated logarithm of $n$)。<br>![](https://i.imgur.com/2IX74Um.png)
+    - 在上方範例中，$2^{65536}$已經是人類文明中極端巨量的數字，所以$\text{log}^*~n$可以視為這樣定義的一個理論上限。
+    - ***Lemma***
+        - 假設資料結構初始為空，且對此我們建立了一系列的**m**個operations，其中包含了**n**個MakeSet，那麼總體花費時間則為$\mathcal{O}(m\text{log}^*~n)$。
+        - 換句話說，單一個operation(無論是否為MakeSet)的平攤時間為$\mathcal{O}(\text{log}^*~n)$，且就上方定義中的務實層面思考，對任何$n$來說，$\text{log}^*~n \le 5$。也就是說無論n多大，每一個op的平均花費時間都被bond在常數底下。
+        - 接下來有18分鐘的證明過程，但我沒有看(optional)。
+
+- Disjoint Set課程總結論
+    - 用一有根樹做為Disjoint set中，每個set的表示。
+    - 以根節點表示對應的set的ID
+    - Union by rank heuristic: 將樹高較小的樹其根接至樹高較大的樹的根節點下，做為其子樹之一。
+    - Path compression heuristic: 在Find()一節點的過程中，適當地將該節點到根的path上所有的節點位置重新安排。
+    - Amortized running time: $\mathcal{O}(\text{log}^*~n)$(對實際的n值而言)。
