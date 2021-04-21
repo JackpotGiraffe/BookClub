@@ -294,7 +294,7 @@
     - BuildHeap(A[n])
     ```=
     size <-- n
-    for i form floor(n/2) downto 1:
+    for i from floor(n/2) downto 1:
         SiftDown(i)
     ```
     - 從$\lfloor \frac{n}{2} \rfloor$開始的原因是，對Binary Max Heap來說，我們只要能確定子樹為Binary Max Heap，則只需要適當調整該子樹所屬的根節點到適當位置，即能夠滿足Binary Max Heap的性質，所以整顆樹的調整從最後一個擁有左右子點的parent開始更新即可最終達成目標。
