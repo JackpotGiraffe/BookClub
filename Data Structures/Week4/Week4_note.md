@@ -16,7 +16,7 @@
     - 描述解釋Dropbox、Google Drive以及Yandex Disk如何節省空間。
     - 描述解釋分散式雜湊表的建立有哪些原則。
 
-## Introduction, Direct Addressing and Chaining
+## Applications of Hashing
 
 - Programming Language
     - 許多語言內建的資料結構本身就是建基於Hash table。例如Python中的dict、Java中的HashMap等等。
@@ -171,3 +171,131 @@
     - 希望能達到類似直接定址的效果，但只需花用$\mathcal{O}(m)$的記憶體
     - Cardinality $m$ 能夠越小越好
     - 當$|S|$比$m$大時，則*h*計算出的值則不可能全數相異
+    - 產生Collisions
+        - When $h(o_{1})=h(o_{2})$ and $o_{1} \neq o_{2}$ calls a collision.
+
+## Chaining Scheme
+
+- One of the most frequently used techniques for using hashing to store mappings.
+
+- Map
+    - 目的是為了維護或儲存一群(類)物件與另一群(類)物件的對應關係。
+        - Filename $\rightarrow$ file on disk
+        - Student ID $\rightarrow$ student name
+        - Contact name $\rightarrow$ contact phone number
+    - 定義
+        - 從集合$S$到集合$V$之間的對應關係，且支援HashKey($O$), Get($O$), Set($O, v$)操作的資料結構，稱為Map，where $O \in S, v \in V$。
+
+- 藉由Hash Function實作Map
+    - Chaining
+        - 準備一陣列，size為$m$，$m$即hash function(h)的cardinality。<br>![](https://i.imgur.com/8QJruJ5.png)
+        - 該陣列不存integer，而是存list
+        - 每個list為一對資料組成，物件$O$及$v$值
+        - 範例：<br>![](https://i.imgur.com/CbqM5I8.png)
+        - 這是應用Hash function時能夠避免collisions的一種常見方法。
+
+## Chaining Implementation and Analysis
+
+- 實作面從基本操作出發
+    $h: S \rightarrow {0, 1, ..., m-1}$
+    $O, O' \in S$
+    $v, v' \in V$
+    $A \leftarrow \text{array of }m \text{ lists (chains) of }pairs(O, v)$
+    - HashKey(O)
+    ```=
+    L <-- A[h(O)]
+    for (O', v') in L:
+        if O' == O
+            return true
+    return false
+    ```
+    - Get(O)
+    ```=
+    L <-- A[h(O)]
+    for (O', v') in L:
+        if O' == O:
+            return v'
+    return n/a (←第一次在pseudocode看到這種寫法)
+    ```
+    - Set(O)
+    ```=
+    L <-- A[h(O)]
+    for p in L:
+        if p.O == O
+        p.v <-- v
+        return
+    L.append(O, v)
+    ```
+    
+- ***Lemma***
+    - Let c be the length of the longest chain A. Then the running time of HsahKey, Get, Set is $\mathcal{\Theta}(c+1)$
+    - 如果c是A中的最常鍊的長度，則HashKey、Get、Set三者花費的時間會是$\mathcal{\Theta}(c+1)$
+    - Proof
+        - $\text{if } L = A[h(O)], \text{ len}(L) = c, O \notin L$, need to scan all c items.
+
+- ***Lemma***(Memory consumption)
+    - Let $n$ be the number of different keys $O$ currently in the map and $m$ be the cardinality of the hash function. Then the memory cosumption for chaining is $\mathcal{\Theta}(n+m)$
+    - Proof
+        - $\mathcal{\Theta}(n)$ to store $n$ pairs $(O, v)$
+        - $\mathcal{\Theta}(m)$ to store array $A$ of size $m$
+
+## Hash Tables
+
+- Definition of Set
+    - A data structure with at least Add(O), Remove(O), Find(O)
+    - Example
+        - IPs accessed during last hour.
+        - Students on campus.
+        - Keywords in a programming language.
+
+- 用Chaining的概念實作Set的方法
+    - 第一種：Set等同於從$S$到$V={true, false}$的Map。
+        - not very efficient
+        - 需要存物件與值的對應數兩倍的結果
+        - 從map中remove物件比較困難，反而是將其對應的valeu設為false
+    - 第二種：只存O而不存(O, v)pairs。
+        $h: S \rightarrow {0, 1, ..., m-1}$
+        $O, O' \in S$
+        $A \leftarrow$ array of $m$ lists (chains) of objects $O$
+        - Find(O)
+        ```=
+        L <-- A[h(O)]
+        for O' in L:
+            if O' == O:
+                return true
+        return false
+        ```
+        - Add(O)
+        ```=
+        L <-- A[h(O)]
+        for O' in L:
+            if O' == O:
+                return
+        L.Append(O)
+        ```
+        - Remove(O)
+        ```=
+        if not Find(O):
+            return
+        L <-- A[h(O)]
+        L.Erase(O)
+        ```
+        
+- Hash Table
+    - 定義
+        - 用Hashing實作的map或set則可稱為Hash Table。
+    - 程式語言實例
+        - Set
+            - unordered_set in C++
+            - HashSet in Java
+            - set in Python
+        - Map:
+            - unordered_map in c++
+            - HashMap in Java
+            - dict in Python
+
+- 結論
+    - Chaining為一項用在實作Hash Table的技術。
+    - Hash table的記憶體花費為$\mathcal{O}(n+m)$
+    - Operations work in time $\mathcal{O}(c+1)$
+    - 衍伸思考：如何讓$m$跟$c$變得更小？
