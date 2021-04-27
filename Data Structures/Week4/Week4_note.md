@@ -453,3 +453,72 @@
     - 選定質數 $p \gt 10^{L}$
     - 確定table size $m$
     - 藉隨機選擇的 $a, b$ 對應universal family $\mathcal{H}_{p}$ 中的hash function
+
+## Hashing Strings
+
+- Lookup Phone Numbers by Name
+    - 實作名字to電話的對應關係
+    - Chaining的方法仍然適用
+    - Hash function的作用變成針對人名運算
+    - 必須要能夠對隨機字串做雜湊
+    - You wil learn how strings hashing is implemented in Java!
+
+- 定義
+    - Denote by $|S|$ the length of string $S$
+    - Examples<br>|"a"|=1<br>|"ab"|=2<br>|"abcde"|=5
+    - 細項如下：
+        - 給定字串 $S$ ，計算其雜湊值。
+        - $S=S[0]S[1]...S[|S|-1]$, where $S[i]$ is individual characters.
+        - 在雜湊函數中，運算應當使用到所有的字元，否則將有可能發生大量collisions：
+            - $S[0]$ is not used $\to h(\text{"aa"})=h(\text{"ba"})=...=h(\text{"za"})$
+
+- 事前準備
+    - 以常用或通用的編碼方式將字元$S[i]$轉換成對應的integer。
+    - 選定足夠大的質數 $p$
+
+- 多像式雜湊函數 (Polynomial Hashing)
+    - Family of hash functions<br>$\mathcal{P}_{p}=\{h_{p}^{x}(S)=\sum^{|S|-1}_{i=0}S[i]x^{i} \text{ mod } p\}$ with a fixed prime $p$ and all $1\le x\le p-1$ called polynomial.
+    - Psuedocode
+    ```=
+    PolyHash(S, p, x)
+    hash <-- 0
+    for i from |S|-1 down to 0:
+        hash <-- (hash * x + S[i]) mod p
+    return hash
+    ```
+    - Example: $|S|=3$
+        - hash = 0
+        - hash = $S[2]$ mod $p$
+        - hash = $S[1]+x*S[2]$ mod $p$
+        - hash = $S[0]+x*S[1]+x^2*S[2]$ mod $p$
+
+- Java Implemetion<br>![](https://i.imgur.com/pSCSXlH.png)
+
+- ***Lemma***<br>對任兩最大長度為$L+1$的相異字串 $s_{1}$ 及 $s_{2}$ ，若從 $\mathcal{P}_{p}$ 中隨機挑出雜湊函數 $h~(\text{by selecting a radom x} \in [1, p-1])$ ，collision發生的機率：<br>$Pr[h(s_{1})=h(s_{2})]$<br>最多不會超過$\frac{L}{p}$
+    - Proof idea<br>對固定質數 $p$ 而言，數學式 $a_{0}+a_{1}x+a_{2}x^{2}+...+a_{L}x^{L}=0\text{ (mod }p\text{)}$ 所能得到的 $x$ 相異解最多不會超過 $L$ 組。
+    - 我們對 $L$ 沒有決定權，但是可以選擇夠大的 $p$ 使得 $\frac{L}{p}$ 變得非常小。
+    - 運行時間受字串的最大長度影響，而不會因選擇的質數 $p$ 有所改變。
+
+## Hashing Strings - Cardinality Fix
+
+- Proposed method
+    - 選定cardinality $m$ 以及足夠大的質數 $p$，且 $p>m$。
+    - 從 polynomial hash family $\mathcal{P}_{p}$ 中隨機選擇 hash function $h$
+    - 再從 universal family $\mathcal{H}_{p}$ 隨機挑選 hash function $h_{\text{int}}$ 用來對 $0 \sim p-1$ 的整數運算
+    - 用hash function $h_{m}(x)=h_{\text{int}}(h(x))$表示整個字串的雜湊運算結果
+
+- ***Lemma***<br>對任兩最大長度為$L+1$的相異字串 $s_{1}$ 及 $s_{2}$ ，若從 $\mathcal{P}_{p}$ 中隨機挑出雜湊函數 $h~(\text{by selecting a radom x} \in [1, p-1])$ ，collision發生的機率：$Pr[h_{m}(s_{1})=h_{m}(s_{2})]$ 最多不會超過$\frac{1}{m}+\frac{L}{p}$
+    - Corollary<br>如果 $p\gt mL$, 對任兩最大長度為$L+1$的相異字串 $s_{1}$ 及 $s_{2}$collision發生的機率：$Pr[h_{m}(s_{1})=h_{m}(s_{2})]$為 $\mathcal{O}(\frac{1}{m})$
+    - Proof
+        - $\frac{1}{m}+\frac{L}{p}\lt \frac{1}{m}+\frac{L}{mL}=\frac{1}{m}+\frac{1}{m}=\frac{2}{m}=\mathcal{O}(\frac{1}{m})$
+
+- Running Time
+    - 當$p$足夠大時，(最長鏈的長度) $c=\mathcal{O}(1+\alpha)$
+    - 計算PolyHash(S)的花費時間是 $\mathcal{O}(|S|)$
+    - 如果名字的長度有被限制在常數$L$之內，則 $h(S)$ 僅花費 $\mathcal{O}(L)=\mathcal{O}(1)$
+
+- 結論
+    - 我們學會對整數及字串做雜湊運算了！
+    - 一本電話簿可以用兩個hash table完成實作！
+    - 需要將名字對應到號碼，也需要反過來根據號碼對應名字
+    - 尋找(Searching)及更改(Modification)資料需要的平均時間是$\mathcal{O}(1)$
