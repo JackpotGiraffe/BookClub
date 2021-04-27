@@ -217,7 +217,7 @@
             return v'
     return n/a (←第一次在pseudocode看到這種寫法)
     ```
-    - Set(O)
+    - Set(O, v)
     ```=
     L <-- A[h(O)]
     for p in L:
@@ -229,7 +229,7 @@
     
 - ***Lemma***
     - Let c be the length of the longest chain A. Then the running time of HsahKey, Get, Set is $\mathcal{\Theta}(c+1)$
-    - 如果c是A中的最常鍊的長度，則HashKey、Get、Set三者花費的時間會是$\mathcal{\Theta}(c+1)$
+    - 如果c是A中的最長鏈的長度，則HashKey、Get、Set三者花費的時間會是$\mathcal{\Theta}(c+1)$
     - Proof
         - $\text{if } L = A[h(O)], \text{ len}(L) = c, O \notin L$, need to scan all c items.
 
@@ -249,7 +249,7 @@
         - Keywords in a programming language.
 
 - 用Chaining的概念實作Set的方法
-    - 第一種：Set等同於從$S$到$V={true, false}$的Map。
+    - 第一種：Set等同於從$S$到$V=\{true, false\}$的Map。
         - not very efficient
         - 需要存物件與值的對應數兩倍的結果
         - 從map中remove物件比較困難，反而是將其對應的valeu設為false
@@ -290,7 +290,7 @@
             - HashSet in Java
             - set in Python
         - Map:
-            - unordered_map in c++
+            - unordered_map in C++
             - HashMap in Java
             - dict in Python
 
@@ -299,3 +299,157 @@
     - Hash table的記憶體花費為$\mathcal{O}(n+m)$
     - Operations work in time $\mathcal{O}(c+1)$
     - 衍伸思考：如何讓$m$跟$c$變得更小？
+
+## Phone Book Problem
+
+- 前面學到了Hash function以及Hash table各式性質以及實作的概念，但這樣的資料結構是否達到高效率的運作，最大還是取決於Hash function的選用。
+
+- Phone Book
+    - 設計一種資料結構能夠存取聯絡人資訊，包含聯絡人的名字及對應的電話號碼，且這樣的資料結構應該於以下操作能夠節省時間：
+        - 新增或刪除聯絡人資訊
+        - 根據聯絡人名字查詢對應的電話號碼
+        - 根據來電號碼找到其所屬的聯絡人
+    - 必須的Maps：
+        - Phone number → name
+        - Name → phone number
+    - 將這樣的對應關係實作成雜湊表
+
+- 首先應該著重於phone number → name
+    - Direct Addressing(又從他開始解說起)
+        - int(AAA-BB-CC) = AAABBCC
+        - 準備一稱為Name的array，size $=10^{L}$，$L$ 為電話號碼可能具有的最大長度
+        - 將電話號碼*P*經過轉換變為int(*P*)儲存於Name[int(*P*)]中
+        - 若*P*沒有與其對應的聯絡人，則Name[int(*P*)] = N/A
+        - 示意圖<br>![](https://i.imgur.com/IxoydfK.png)
+
+- 操作分析
+    - Operations run in $\mathcal{O}(1)$
+    - Memory usage: $\mathcal{O}(10^{L})$, L is the maximum length of a phone number.
+    - 當遇到不同國家、區域等電話號碼規則，則需要更多memory維護新的陣列，舊的陣列將不再適用。
+
+## Phone Book Problem (趴兔)
+
+- 將前述的Chaining方法用上
+    - 選定cardinality為$m$的hash function $h$
+    - 用size為$m$的陣列(Name)做存取
+    - 將串列(鏈)存於Name的各個位置空間
+    - Name[h(int(P))]這樣的一個串列包含電話號碼與名字之間的對應關係
+    - 示意圖<br>![](https://i.imgur.com/BxAmJib.png)
+
+- 參數表列
+    - n: 被存在Name中的電話號碼數量
+    - m: hash function 的 cardinality
+    - c: 最長鏈的長度
+    - 記憶體占用：$\mathcal{O}(n+m)$
+    - $\alpha = \frac{n}{m}$ 稱為load factor
+    - 操作時間花費：$\mathcal{O}(c+1)$
+    - <font color=red>回顧：我們希望m與c能夠越小越好</font>
+        - Good Example<br>![](https://i.imgur.com/OxH0ueB.png)
+        - Bad Example<br>![](https://i.imgur.com/cVtQfZ5.png)
+
+- 嘗試與選擇
+    - First Digits
+        - m = 1000 for the map from phone numbers to names.
+        - Hash function: phone number的前三碼. E.g. h(800-123-45-67) = 800
+        - <font color=red>Problem: area code</font>
+            - 相同區域的號碼會得到同樣的hash value，導致chain length變長。<br>h(425-234-55-67) =<br>h(425-123-45-67) =<br>h(425-223-23-23) = ... = 425
+    - Last Digits
+        - m同上
+        - Hash function: phone number的末三碼. E.g. h(800-123-45-67) = 567
+        - <font color=red>Problem: many phone numbers end with three zeros.</font>(應該是要表達末三碼相同的電話號碼也是很多很常見?)
+    - Random Value
+        - m同上
+        - Hash function: random number between 0 and 999
+        - <font color=green>Uniform distribution of hash value</font>
+        - <font color=red>當再次用一樣的input時，hash function會吐出不同的結果，導致根本無法找到任何正確的電話號碼或對應的名字。</font>
+        - Hash functtion must be deterministic.
+
+- Good Hash function
+    - Deterministic
+    - Fast to compute
+    - Distributes keys well into different cells
+    - Few collisions
+
+- 沒有萬能的(universal) Hash function
+    - ***Lemma***<br>若一hash function其可能產生的key非常多($|U| \gg  m$)，then there is a bad input resulting in  many collisions.
+    - e.g.<br>![](https://i.imgur.com/MQq8g0k.png)
+
+## Universal Family
+
+- Quick Sort
+    - 從$\mathcal{O}(n^{2})$出發
+    - 進一步證明random pivot能夠使其在平均$\mathcal{O}(n\text{log}n)$完成
+    - 實際上，其實大多數情況下Quick sort能夠運作地比其他排序演算法快。
+    - 在雜湊上運用randomization的概念(當然不是指以隨機方式運算雜湊值)。
+
+- Randomization的概念
+    - 定義一個由hash functions形成的集合稱為family。
+    - 從family中隨機挑選雜湊函數使用。
+
+- Definition
+    - Let $U$ be the universe: the set of all possible keys.
+    - A set of functions $\mathcal{H} = \{h:U \rightarrow \{0, 1, 2, ..., m-1\}\}$ is called a universal family.
+    - For any two keys $x, y \in U, x \neq y$ the probability of collision:<br>$Pr[h(x)=h(y)] \leq \frac{1}{m}$
+    - This means that a collision $h(x)=h(y)$ on selected keys $x$ and $y$, $x \neq y$ happens for no more than $\frac{1}{m}$ of all hash functions $h \in \mathcal{H}$
+
+- How Randomization Works
+    - $h(x)=\text{random}(\{0, 1, 2, ..., m-1\})$ gives probability of collision exactly $\frac{1}{m}$.
+    - All hash function in $\mathcal{H}$ are deterministic.
+    - Select a random function $h$ from $\mathcal{H}$
+    - Fixed $h$ is used throughout the algorithm.
+
+- Running Time
+    - ***Lemma***<br>If $h$ is chosen randomly from a universal family, the average length of the longest chain $c$ is $\mathcal{O}(1+\alpha)$, where $\alpha=\frac{n}{m}$ is the load factor of the hash table.
+    - **Corollary**<br>If $h$ is from universal family, operations with hash table run on average in time $\mathcal{O}(1+\alpha)$
+
+- 雜湊表的大小選擇
+    - 用cardinality m做為記憶體使用量的控制指標。
+    - 理想上load factor介於0.5到1之間$(0.5\lt \alpha \lt 1)$。
+    - 儲存的keys數量為n，則記憶體使用量bond在$\mathcal{O}(m)=\mathcal{O}(\frac{n}{\alpha})=\mathcal{O}(n)$。
+    - 操作時間則bond在$\mathcal{O}(1+\alpha)=\mathcal{O}(1)$
+
+- 動態雜湊表(Dynamic Hash Table)<br>如果keys的數量未知？<br>該先準備一個極大的hash table嗎？
+    - 必定會浪費大量未充分利用的記憶體空間。
+    - 應效法dynamic array的概念。
+    - 當$\alpha$太大的時候才Resize hash table。
+    - 從新的universal family選出新的hash function，並更新所有表中物件。
+    - 將load factor保持在0.9以下：
+    ```=
+    Rehash(T)
+    loadFactor <-- T.numberOfKeys / T.size
+    if loadFactor > 0.9:
+        Create T_new of size 2*T
+        Choose h_new with cardinality T_new.size
+        For each object O in T:
+            Insert O in T_new using h_new
+        T <-- T_new, h <-- h_new
+    ```
+    - Rehash time: 在每次對table的operation之後就該被執行一次，單次時間需要$\mathcal{O}(n)$，但因為rehash理論上來講鮮少被觸發，所以平攤結果仍為$\mathcal{O}(1)$。
+
+## Hashing Integers
+
+- 再次回到Phone number problem
+    - 假設電話號碼長度最多為7，例如：148-25-67
+    - 將電話號碼轉換成整數$0$到$10^{7}-1=9999999$：<br>148-25-67 $\rightarrow$ 1482567
+    - 選定一個比$10^{7}$還大的質數$p$，例如：10000019
+    - 確立hash table size，例如：$m=1000$
+    - ***Lemma***<br>$\mathcal{H}_{p}=\{h_{p}^{a,b}(x)=((ax+b)\text{ mod }p)\text{ mod }m\}$<br>$\forall a, b: 1 \le a \le p-1, 0 \le b \le p-1$ is an universal family.
+    - a, b為任意常數，基本上固定a跟b即為選定特定的hash function
+    - x是欲做雜湊運算的input integer，從電話號碼轉換而得
+    - 為了這樣的雜湊運算機制與過程，先用線性轉換處理x，再依序對p及m取餘數
+    - 所有被a, b數對indexed的hash function會有相同的cardinaly m
+    - 範例：<br>What is the size of this hash family (the number of different hash functions in the set $\mathcal{H}$? ans. 答案見留言
+    - 原口述內容：The Lemma states that it really will be a universal family for integers between 0 and p minus 1. (這個lemma告訴我們對0~p-1的input來說，這樣的$\mathcal{H}$「真的」是一個universal family，證明在optional video...)
+
+- Hashing Phone Number Example
+    - 若 $p=10000019$，選定 $a=34, b=2$ 則 $h=h^{34, 2}_{p}$ ，phone number 148-25-67轉換而得的對應整數 $x=1482567$
+    - $(34\times 1482567+2)\text{ mod } 10000019=407185$
+    - $407185\text{ mod }1000=185$
+    - $h(x)=185$
+
+- General Case
+    - 先行確立input的最大長度 (max length of phone number $L$)
+    - 將所有可能的key值轉換成 $0\text{ ~ }10^{L}-1$ 的integer
+    - 選定質數 $p \gt 10^{L}$
+    - 確定table size $m$
+    - 藉隨機選擇的 $a, b$ 對應universal family $\mathcal{H}_{p}$ 中的hash function
