@@ -522,3 +522,95 @@
     - 一本電話簿可以用兩個hash table完成實作！
     - 需要將名字對應到號碼，也需要反過來根據號碼對應名字
     - 尋找(Searching)及更改(Modification)資料需要的平均時間是$\mathcal{O}(1)$
+
+## Search Pattern in Text
+
+- Description
+    - Given a text T (book, website, facebook profile) and a pattern P (word phrase), find all occurrences of P in T.
+    - Examples
+        - Someone's name on a website
+        - Twitter messages about a company
+        - Detect file infected by birus (code patterns)
+
+- 定義
+    - Denote by $S[i..j]$ the substring of string $S$ starting in position $i$ and ending in position $j$.
+    - Examples
+        - If $S$ = "abcde", then
+            - $S[0..4]$ = "abcde"
+            - $S[0..3]$ = "bcd"
+            - $S[2..2]$ = "c"
+    - Input: String $T$ and $P$
+    - Output: All such positions $i$ in $T$, $0\le i \le |T|-|P|$ that $T[i..i+|P|-1]=P$
+
+- 初步實作
+    - 對於每一個從$0$到$|T|-|P|$的position $i$，逐一檢驗$T[i..i+|P|-1]$是否成立，如果是便將$i$加入至結果中。
+    - AreEqual($S_{1}$, $S_{2}$)
+    ```=
+    if |S_1| ~= |S_2|
+        return False:
+    for i from 0 to |S_1| - 1:
+        if S_1[i] ~= S_2[i]:
+            return Fasle
+    return True
+    ```
+    - FindPatternNaive($T$, $P$)
+    ```=
+    result <-- empty list
+    for i from 0 to |T| - |P|:
+        if areEqual(T[i..i + |P| - 1], P):
+            result.Append(i)
+    return result
+    ```
+    
+- Running time
+    - ***Lemma***<br>Running time of FindPatternNaive($T$, $P$) i $\mathcal{O}(|T||P|)$
+    - Proof
+        - 每次執行AreEqual花費$\mathcal{O}(|P|)$
+        - $|T|-|P|+1$次執行AreEqual則總共需要$\mathcal{O}((|T|-|P|+1)|P|)=\mathcal{O}(|T||P|)$
+    - 糟糕的情況
+        - 當$T$與$P$僅只有末一字元相異時，AreEqual仍然會被執行$|P|$次逐一比對，但兩者間差異僅在末端字元，因此這樣的實作演算法其時間變為$\mathcal{\Theta}(|T||P|)$
+
+## Rabin-Karp's Algorithm
+
+- 概念
+    - Need to compare $P$ with all substrings $S$ of $T$ of length $|P|$
+    - 理想上利用雜湊運算快速比較$P$與$T$的substrings
+
+- 演算法
+    - If $h(P) \neq h(S)$, then definitely $P \neq S$
+    - If $h(P) = h(S)$, call AreEqual($P$, $S$)
+    - Use Polynomial hash family $\mathcal{P}_{p}$ with prime number $p$
+    - If $P \neq S$, the probability $Pr[h(P)=h(S)]$ is at most $\frac{|P|}{p}$ for polynomial hashing
+    - RabinKarp($T$, $P$)
+    ```=
+    p <-- big prime, x <-- random(1, p-1)
+    result <-- empty list
+    pHash <-- PolyHash (P, p, x)
+    for i from 0 to |T| - |P|:
+        tHash <-- PolyHash(T[i..i + |P| - 1], p, x)
+        if pHash ~= tHash:
+            continue
+        if AreEqual(T[i..i + |P| - 1], P):
+            result.Append(i)
+    return result
+    ```
+
+- False Alarms
+    - The event when $P$ is compared with $T[i..i+|P|-1]$ but $P \neq T[i..i+|P|-1]$
+    - 這樣的機率最高$\frac{|P|}{p}$
+    - 平均而言Fasle alarm的總次數應為$(|T|-|P|+1)\frac{|P|}{p}$，而且能夠因為選用的質數$p\gg|T||P|$而變得更小
+
+- Running Time without AreEqual
+    - $h(P)$ 計算上需要 $\mathcal{O}(|P|)$
+    - $h(T[i..i+|P|-1])$ 需要 $\mathcal{O}(|P|)$，實際運算 $|T|-|P|+1$ 次
+    - $\mathcal{O}(|P|)+\mathcal{O}((|T|-|P|+1)|P|)=\mathcal{O}(|T||P|)$
+
+- Running Time of AreEqual
+    - 運算花費時間 $\mathcal{O}(|P|)$
+    - 只有當$h(P)=h(T[i..i+|P|-1])$時才會執行，也就是說要嘛找到一次pattern $P$，要嘛出現false alarm
+    - 透過選用$p\gg|T||P|$使得false alarm變得微不足道
+
+- Total Running Time
+    - if $P$ is found $q$ times in $T$, then total time spent in AreEqual is $\mathcal{O}((q+\frac{(|T|-|P|+1)|P|}{p})|P|)=\mathcal{O}(q|P|)$ for $p\gg|T||P|$
+    - Total running time is $\mathcal{O}(|T||P|)+\mathcal{O}(|T||P|)$ as $q\le |T|$
+    - 跟Naive比起來沒有好太多，但仍有進步空間。
