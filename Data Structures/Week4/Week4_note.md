@@ -333,7 +333,7 @@
     - 選定cardinality為$m$的hash function $h$
     - 用size為$m$的陣列(Name)做存取
     - 將串列(鏈)存於Name的各個位置空間
-    - Name[h(int(P))]這樣的一個串列包含電話號碼與名字之間的對應關係
+    - Name[h(int\(P\))]這樣的一個串列包含電話號碼與名字之間的對應關係
     - 示意圖<br>![](https://i.imgur.com/BxAmJib.png)
 
 - 參數表列
@@ -530,7 +530,7 @@
     - Examples
         - Someone's name on a website
         - Twitter messages about a company
-        - Detect file infected by birus (code patterns)
+        - Detect file infected by virus (code patterns)
 
 - 定義
     - Denote by $S[i..j]$ the substring of string $S$ starting in position $i$ and ending in position $j$.
@@ -563,7 +563,7 @@
     ```
     
 - Running time
-    - ***Lemma***<br>Running time of FindPatternNaive($T$, $P$) i $\mathcal{O}(|T||P|)$
+    - ***Lemma***<br>Running time of FindPatternNaive($T$, $P$) is $\mathcal{O}(|T||P|)$
     - Proof
         - 每次執行AreEqual花費$\mathcal{O}(|P|)$
         - $|T|-|P|+1$次執行AreEqual則總共需要$\mathcal{O}((|T|-|P|+1)|P|)=\mathcal{O}(|T||P|)$
@@ -614,3 +614,76 @@
     - if $P$ is found $q$ times in $T$, then total time spent in AreEqual is $\mathcal{O}((q+\frac{(|T|-|P|+1)|P|}{p})|P|)=\mathcal{O}(q|P|)$ for $p\gg|T||P|$
     - Total running time is $\mathcal{O}(|T||P|)+\mathcal{O}(|T||P|)$ as $q\le |T|$
     - 跟Naive比起來沒有好太多，但仍有進步空間。
+
+## Optimization: Precomputation(Searching Patterns)
+
+- 對String做雜湊運算
+    $$
+    h(S)=\sum_{i=0}^{|S|-1}S[i]x^{i} \text{ mod }p
+    $$
+    - 也就是說$h(T[i..i+|P|-1])$的表示如下：
+    $$
+    h(T[i..i+|P|-1])=\sum_{j=i}^{i+|P|-1}T[j]x^{j-i} \text{ mod }p
+    $$
+        - Idea: 對$T$中兩連續的substrings做polynomial hashing能得到非常相似的結果。
+        - 對應各個$i$，將$h(T[i..i+|P|-1])$以$H[i]$表示
+    - 範例<br>![](https://i.imgur.com/JdOg8pf.png)
+    - 所以得到下列表示式：
+    $$
+    \begin{align}
+    H[i+1]&=\sum_{j=i+1}^{i+|P|}T[j]x^{j-i-1} \text{ mod }p\\
+        H[i]&=\sum_{j=i}^{i+|P|-1}T[j]x^{j-i} \text{ mod }p\\
+        &=\sum_{j=i+1}^{i+|P|}T[j]x^{j-i}+T[i]-T[i+|P|]x^{|P|}\text{ mod } p\\
+        &=x\sum_{j=i+1}^{i+|P|}T[j]x^{j-i-1}+(T[i]-T[i+|P|]x^{|P|})\text{ mod } p\\
+        H[i]&=xH[i+1]+(T[i]-T[i+|P|]x^{|P|})\text{ mod } p
+    \end{align}
+    $$
+    
+- PrecomputeHashes($T$, $|P|$, $p$, $x$):
+```=
+H <-- array of length |T| - |P| + 1
+S <-- T[|T| - |P|..|T| - 1]
+H[|T| - |P|] <-- PolyHash(S, p, x)
+y <-- 1
+for i from 1 to |P|:
+    y <-- (y * x) mod p
+for i from |T| - |P| - 1 down to 0:
+    H[i] <-- (xH[i+1] + T[i] - yT[i + |P|]) mod p
+return H
+```
+
+- Asymptotic
+    - PolyHash被呼叫一次：$\mathcal{O}(|P|)$
+    - 第一個for loop：$\mathcal{O}(|P|)$
+    - 第二個for loop：$\mathcal{O}(|T|-|P|)$
+    - Total PrecomputeHashes: $\mathcal{O}(|P|+|P|+|T|-|P|)=\mathcal{O}(|P|+|T|)$
+
+## Optimization: Implementation and Analysis(Searching Patterns)
+
+- RabinKarp($T$, $P$)
+```=
+p <-- big prime, x <-- random(1, p-1)
+result <-- empty list
+pHash <-- PolyHash (P, p, x)
+H <-- PrecomputeHashes(T, |P|, p, x)
+for i from 0 to |T| - |P|:
+    if pHash ~= H[i]:
+        continue
+    if AreEqual(T[i..i + |P| - 1], P):
+        result.Append(i)
+return result
+```
+
+- Improved Running Time
+    - $h(P)$ is computed in $\mathcal{O}(|P|)$
+    - PrecomputeHashes runs in $\mathcal{O}(|T|+|P|)$
+    - Total time spent in Are Equal is $\mathcal{O}(q|P|)$ on average where q is the number of occurrences of $P$ in $T$
+    - Average running time $\mathcal{O}(|T|+(q+1)|P|)$
+    - Usually q is small, so this is much less than $\mathcal{O}(|T||P|)$
+
+- 結論
+    - 對於存取Sets及Maps而言，Hash table相當實用
+    - 對Hash table的search與modify能夠在平均上只花費$\mathcal{O}(1)$
+    - Hash function的選用上必須從好的family中隨機選取
+    - 對於字串的處理Hash也有良好表現
+    - 在分散式系統以及資料科學的領域中，Hash有更多的應用
